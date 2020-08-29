@@ -2,7 +2,6 @@
 # timetree@kakao.com
 # 2020.08.29
 
-import re
 import requests as r
 from bs4 import BeautifulSoup as BS4
 
@@ -38,6 +37,7 @@ def main():
       ReportRes = s.post(ReportURL, data = ReportData).text
       ReportHTML = BS4(ReportRes, 'html.parser')
       ReportList = ReportHTML.select('table > tbody > tr')
+      print('--------- 과제 현황 --------')
       for RL in ReportList:
         Nb = RL.select('td')[0].text
         if '없습니다' in Nb:
