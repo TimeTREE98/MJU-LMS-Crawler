@@ -32,7 +32,17 @@ def main():
       AttRes = s.post(AttendanceURL, data = AttData).text
       AttHTML = BS4(AttRes, 'html.parser')
       print('--------- 출석율 -----------')
-      print(AttHTML.select('div > div')[0].text.replace('\n', '')) # 출석율
+      AttWeek = AttHTML.select('div > div > div > p')  # 출석 주
+      AttList = AttHTML.select('div > div > div > ul')  # 출석 차시
+      print(AttHTML.select('div > div')[0].text.replace('\n', '')) # 전체 출석율
+      for ALidx, AL in enumerate(AttWeek):
+        AttSubList = AttList[ALidx].select('ul > li')
+        AttPer = ''
+        for ASLidx, ASL in enumerate(AttSubList):
+          AttPer += ASL.text.split('(')[1].split(')')[0] + ' / '
+          if ASLidx + 1 == len(AttSubList):
+            AttPer = ASL.text.split('\r\n')[3].split('               ')[1][:-1] + ' | ' + AttPer[:-3]
+        print(AL.text, AttPer)
       ReportData = {'start' : '' , 'display' : '1', 'SCH_VALUE' : '', 'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
       ReportRes = s.post(ReportURL, data = ReportData).text
       ReportHTML = BS4(ReportRes, 'html.parser')
