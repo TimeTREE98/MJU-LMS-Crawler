@@ -38,9 +38,11 @@ def main():
       ReportRes = s.post(ReportURL, data = ReportData).text
       ReportHTML = BS4(ReportRes, 'html.parser')
       ReportList = ReportHTML.select('table > tbody > tr')
-      print('--------- 과제 현황 --------')
       for RL in ReportList:
         Nb = RL.select('td')[0].text
+        if '없습니다' in Nb:
+          print(Nb)
+          break
         Nm = RL.select('td')[1].select('a > div')[0].text
         Prg = RL.select('td')[2].text  # 공백 및 개행 제거 처리 필요
         Sub = RL.select('td')[3].select('img')[0]['title']
