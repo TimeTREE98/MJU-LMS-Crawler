@@ -42,42 +42,43 @@ def main():
         AttData = {'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
         AttRes = s.post(AttendanceURL, data = AttData).text
         AttHTML = BS4(AttRes, 'html.parser')
-        print('--------- 출석율 -----------')
-        AttWeek = AttHTML.select('div > div > div > p')  # 출석 주
-        AttList = AttHTML.select('div > div > div > ul')  # 출석 차시
         Attendance = []
-        AttStat = AttHTML.select('div > div')[0].text.replace('\n', '') # 전체 출석율
-        Attendance.append(AttStat)
-        print(AttStat) # 전체 출석율
-        for ALidx, AL in enumerate(AttWeek):
-          AttSubList = AttList[ALidx].select('li')
-          AttPer = ''
-          for ASLidx, ASL in enumerate(AttSubList):
-            AttPer += ASL.text.split('(')[1].split(')')[0] + ' / '
-            if ASLidx + 1 == len(AttSubList):
-              #AttPer = ASL.text.split('\r\n')[3].split('               ')[1][:-1] + ' | ' + AttPer[:-3] 마감일 나오는 부분, 추후 활용 가능성 있음
-              AttPer = AttPer[:-3]
-          Attendance.append(AL.text + ' ' + AttPer)  # 주마다 출석율 표시 >> 1주 100% / 100%
-          print(AL.text, AttPer)
-        ReportData = {'start' : '' , 'display' : '1', 'SCH_VALUE' : '', 'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
-        ReportRes = s.post(ReportURL, data = ReportData).text
-        ReportHTML = BS4(ReportRes, 'html.parser')
-        ReportList = ReportHTML.select('table > tbody > tr')
         Report = []
-        print('--------- 과제 현황 --------')
-        for RL in ReportList:
-          Nb = RL.select('td')[0].text
-          if '없습니다' in Nb:
-            print(Nb)
-            break
-          Nm = RL.select('td')[1].select('a > div')[0].text  # 주차
-          Prg = RL.select('td')[2].text  # 과제 현황 > 공백 및 개행 제거 처리 필요
-          Sub = RL.select('td')[3].select('img')[0]['title']  # 과제 이름
-          DeadLine = RL('td')[6].text  # 제출 기한
-          Report.append(Nb + ' | ' + Nm + ' | ' + Sub + ' | ' + DeadLine)
-        Report.reverse()
-        for R in Report:
-          print(R)
+        if '선택하세요.' not in AttRes:  # 출석율 URL 에서 '과목을 선택하세요' 에러 나올 경우 출석 및 과제 없는 것으로 처리 (청강 과목의 경우)
+          print('--------- 출석율 -----------')
+          AttWeek = AttHTML.select('div > div > div > p')  # 출석 주
+          AttList = AttHTML.select('div > div > div > ul')  # 출석 차시
+          AttStat = AttHTML.select('div > div')[0].text.replace('\n', '') # 전체 출석율
+          Attendance.append(AttStat)
+          print(AttStat) # 전체 출석율
+          for ALidx, AL in enumerate(AttWeek):
+            AttSubList = AttList[ALidx].select('li')
+            AttPer = ''
+            for ASLidx, ASL in enumerate(AttSubList):
+              AttPer += ASL.text.split('(')[1].split(')')[0] + ' / '
+              if ASLidx + 1 == len(AttSubList):
+                #AttPer = ASL.text.split('\r\n')[3].split('               ')[1][:-1] + ' | ' + AttPer[:-3] 마감일 나오는 부분, 추후 활용 가능성 있음
+                AttPer = AttPer[:-3]
+            Attendance.append(AL.text + ' ' + AttPer)  # 주마다 출석율 표시 >> 1주 100% / 100%
+            print(AL.text, AttPer)
+          ReportData = {'start' : '' , 'display' : '1', 'SCH_VALUE' : '', 'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
+          ReportRes = s.post(ReportURL, data = ReportData).text
+          ReportHTML = BS4(ReportRes, 'html.parser')
+          ReportList = ReportHTML.select('table > tbody > tr')
+          print('--------- 과제 현황 --------')
+          for RL in ReportList:
+            Nb = RL.select('td')[0].text
+            if '없습니다' in Nb:
+              print(Nb)
+              break
+            Nm = RL.select('td')[1].select('a > div')[0].text  # 주차
+            Prg = RL.select('td')[2].text  # 과제 현황 > 공백 및 개행 제거 처리 필요
+            Sub = RL.select('td')[3].select('img')[0]['title']  # 과제 이름
+            DeadLine = RL('td')[6].text  # 제출 기한
+            Report.append(Nb + ' | ' + Nm + ' | ' + Sub + ' | ' + DeadLine)
+          Report.reverse()
+          for R in Report:
+            print(R)
         Result.append({'Subject' : Subject, 'Attendance' : Attendance, 'Report' : Report})
         print('\n')
     return Result
