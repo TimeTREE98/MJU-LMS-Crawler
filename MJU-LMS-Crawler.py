@@ -23,6 +23,9 @@ def main():
       SubjectURL = 'http://lms.mju.ac.kr/ilos/mp/course_register_list.acl'
       SubjectRoomURL = 'http://lms.mju.ac.kr/ilos/st/course/eclass_room2.acl'  # 강의실 POST URL
       AttendanceURL = 'http://lms.mju.ac.kr/ilos/st/course/attendance_list.acl'  # 출석율 POST URL
+      OnlineListURL = 'http://lms.mju.ac.kr/ilos/st/course/online_list.acl'  # 강의 영상 POST URL
+      OnlineViewFormURL = 'http://lms.mju.ac.kr/ilos/st/course/online_view_form.acl'  # 강의 영상 VIEW POST URL
+      OnlineViewNaviURL = 'http://lms.mju.ac.kr/ilos/st/course/online_view_navi.acl'  # 강의 영상 Navi POST URL
       ReportURL = 'http://lms.mju.ac.kr/ilos/st/course/report_list.acl'  # 과제 제출 POST URL
       SubjectData = {'YEAR' : '2020', 'TERM' : '3', 'encoding' : 'utf-8'}  # 이 부분 학기별로 값이 달라지는 듯. 매 학기 별 갱신 작업 필요
       LoginRes = json.loads(s.post(LoginURL, data = LoginData).text)
@@ -44,6 +47,7 @@ def main():
         AttHTML = BS4(AttRes, 'html.parser')
         Attendance = []
         Report = []
+        Online = []
         if '선택하세요.' not in AttRes:  # 출석율 URL 에서 '과목을 선택하세요' 에러 나올 경우 출석 및 과제 없는 것으로 처리 (청강 과목의 경우)
           print('--------- 출석율 -----------')
           AttWeek = AttHTML.select('div > div > div > p')  # 출석 주
@@ -59,6 +63,23 @@ def main():
               if ASLidx + 1 == len(AttSubList):
                 #AttPer = ASL.text.split('\r\n')[3].split('               ')[1][:-1] + ' | ' + AttPer[:-3] 마감일 나오는 부분, 추후 활용 가능성 있음
                 AttPer = AttPer[:-3]
+                # 여기서부터 동영상 링크 추출 파트. 추후 수정 가능성 있음.
+                OnlineListData = {'ud' : UserID, 'ky' : SjCode, 'WEEK_NO' : ALidx + 1, 'encoding' : 'utf-8'}
+                OnlineListRes = s.post(OnlineListURL, data = OnlineListData).text
+                OnlineListHTML = BS4(OnlineListRes, 'html.parser')
+                OnlineList = OnlineListHTML.select('div > ul > li > img')
+                for OL in OnlineList:
+                  OLARR = OL['onclick'].split("'")
+                  OnlineViewFormData = {'lecture_weeks': ALidx + 1, 'WEEK_NO': ALidx + 1, '_KJKEY': SjCode, 'kj_lect_type': 0}
+                  OnlineViewFormRes = s.post(OnlineViewFormURL, data = OnlineViewFormData).text
+                  OnlineViewFormHTML = BS4(OnlineViewFormRes, 'html.parser')
+                  OnlineViewList = OnlineViewFormHTML.select('.item-title-lesson')
+                  for OVL in OnlineViewList:
+                    OVLARR = OVL['val'].split('^')
+                    OnlineViewNaviData = {'content_id': OVLARR[1], 'organization_id': OVLARR[2], 'lecture_weeks': OVLARR[3], 'navi': 'current', 'item_id': OVLARR[0], 'ky': SjCode, 'ud': UserID, 'returnData': 'json', 'encoding': 'utf-8'}
+                    OnlineViewNaviRes = json.loads(s.post(OnlineViewNaviURL, data = OnlineViewNaviData).text)  # Navi 영역 POST 요청, Json 형태 변환
+                    print(OnlineViewNaviRes['path'])
+                    Online.append({'Week' : ALidx + 1, 'Link' : OnlineViewNaviRes['path']})  # 주차별 동영상 링크 저장
             Attendance.append(AL.text + ' ' + AttPer)  # 주마다 출석율 표시 >> 1주 100% / 100%
             print(AL.text, AttPer)
           ReportData = {'start' : '' , 'display' : '1', 'SCH_VALUE' : '', 'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
@@ -79,7 +100,7 @@ def main():
           Report.reverse()
           for R in Report:
             print(R)
-        Result.append({'Subject' : Subject, 'Attendance' : Attendance, 'Report' : Report})
+        Result.append({'Subject' : Subject, 'Attendance' : Attendance, 'Online' : Online, 'Report' : Report})
         print('\n')
     return Result
   except Exception as e:
