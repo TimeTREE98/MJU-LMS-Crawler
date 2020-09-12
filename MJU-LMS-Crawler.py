@@ -67,19 +67,18 @@ def main():
                 OnlineListData = {'ud' : UserID, 'ky' : SjCode, 'WEEK_NO' : ALidx + 1, 'encoding' : 'utf-8'}
                 OnlineListRes = s.post(OnlineListURL, data = OnlineListData).text
                 OnlineListHTML = BS4(OnlineListRes, 'html.parser')
-                OnlineList = OnlineListHTML.select('div > ul > li > img')
+                OnlineList = OnlineListHTML.select('li > div > div > div > div > span[onclick]')
                 for OL in OnlineList:
-                  OLARR = OL['onclick'].split("'")
-                  OnlineViewFormData = {'lecture_weeks': ALidx + 1, 'WEEK_NO': ALidx + 1, '_KJKEY': SjCode, 'kj_lect_type': 0}
+                  OLARR = OL['onclick'].split("'")  # ['viewGo(', '1', ', ', '3', ', ', '202009062359', ', ', '202009121417', ',', '118719', ');']
+                  OnlineViewFormData = {'lecture_weeks': OLARR[3], 'WEEK_NO': OLARR[1], '_KJKEY': SjCode, 'kj_lect_type': 0}
                   OnlineViewFormRes = s.post(OnlineViewFormURL, data = OnlineViewFormData).text
                   OnlineViewFormHTML = BS4(OnlineViewFormRes, 'html.parser')
                   OnlineViewList = OnlineViewFormHTML.select('.item-title-lesson')
-                  for OVL in OnlineViewList:
-                    OVLARR = OVL['val'].split('^')
-                    OnlineViewNaviData = {'content_id': OVLARR[1], 'organization_id': OVLARR[2], 'lecture_weeks': OVLARR[3], 'navi': 'current', 'item_id': OVLARR[0], 'ky': SjCode, 'ud': UserID, 'returnData': 'json', 'encoding': 'utf-8'}
-                    OnlineViewNaviRes = json.loads(s.post(OnlineViewNaviURL, data = OnlineViewNaviData).text)  # Navi 영역 POST 요청, Json 형태 변환
-                    print(OnlineViewNaviRes['path'])
-                    Online.append({'Week' : ALidx + 1, 'Link' : OnlineViewNaviRes['path']})  # 주차별 동영상 링크 저장
+                  OVLARR = OnlineViewList[0]['val'].split('^')  # ['118717', '4216', '1', '1', 'N']
+                  OnlineViewNaviData = {'content_id': OVLARR[1], 'organization_id': OVLARR[2], 'lecture_weeks': OVLARR[3], 'navi': 'current', 'item_id': OLARR[9], 'ky': SjCode, 'ud': UserID, 'returnData': 'json', 'encoding': 'utf-8'}
+                  OnlineViewNaviRes = json.loads(s.post(OnlineViewNaviURL, data = OnlineViewNaviData).text)  # Navi 영역 POST 요청, Json 형태 변환
+                  print(OnlineViewNaviRes['path'])
+                  Online.append({'Week' : ALidx + 1, 'Link' : OnlineViewNaviRes['path']})  # 주차별 동영상 링크 저장
             Attendance.append(AL.text + ' ' + AttPer)  # 주마다 출석율 표시 >> 1주 100% / 100%
             print(AL.text, AttPer)
           ReportData = {'start' : '' , 'display' : '1', 'SCH_VALUE' : '', 'ud' : UserID, 'ky' : SjCode, 'encoding' : 'utf-8'}
