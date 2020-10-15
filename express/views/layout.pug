@@ -1,0 +1,65 @@
+doctype html
+html
+  head
+    title= title
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(href='/assets/bulma/bulma.min.css' rel='stylesheet')
+    link(href='/assets/vanillatoasts/vanillatoasts.css' rel='stylesheet')
+    link(href='/assets/css/timetree-custom.css' rel='stylesheet')
+    link(rel='icon' href='favicon.ico')
+    link(href='data:,' rel='icon')
+    block head
+  body
+    nav.navbar
+      .container
+        .navbar-brand
+          a.navbar-item(href='/') 띵지
+          a.navbar-burger(role='button' aria-label='menu' aria-expanded='false')
+            span(aria-hidden='true')
+            span(aria-hidden='true')
+            span(aria-hidden='true')
+        .navbar-menu
+          .navbar-start
+            a.navbar-item.navbar-item-dropdown(href='javascript:void(0);' onclick='show_modal("login_modal");') LOGIN
+    block content
+    .modal(id='login_modal')
+      .modal-background
+      .modal-card
+        header.modal-card-head
+          button.is-small.delete(onclick='hide_modal();' aria-label='close')
+        section.modal-card-body
+          form(id='login_form' autocomplete='off')
+            input.input.is-small(name='UserID' type='text' placeholder='학번')
+            input.input.is-small(name='UserPW' type='password' placeholder='비밀번호')
+        footer.modal-card-foot.buttons.is-centered
+          button.button.is-danger.is-light.is-small(onclick='hide_modal();') 닫기
+          button.button.is-primary.is-light.is-small(id='loginBtn' onclick='login_submit();') 로그인
+    .modal(id='download_notice_modal')
+      .modal-background
+      .modal-card
+        header.modal-card-head
+          button.is-small.delete(onclick='hide_modal();' aria-label='close')
+        section.modal-card-body
+          p 강의 영상은 개인 소장용으로만 쓰시기 바랍니다.
+          p(style='color: red;') 무단 복제, 배포, 전송(공중 송신)을 하는 경우 저작재산권 침해죄에 해당하며 저작권법에 의거하여 법적 조치를 받을 수 있습니다.
+          p 위의 법적 조치 발생 시, 이 사이트는 아무런 책임이 없습니다.
+          br
+          div(id='download_url' style='text-align: center;')
+        footer.modal-card-foot.buttons.is-centered
+          button.button.is-danger.is-light.is-small(onclick='hide_modal();') 닫기
+    footer.footer
+      .container
+        .columns.is-centered
+          .column.is-4.has-text-centered.is-hidden-tablet
+            a.title.is-4(href='/') TimeTREE
+          .column.is-4.has-text-centered.is-hidden-mobile
+            a.title.is-4(href='/') TimeTREE
+        p.subtitle.has-text-centered.is-6
+          | &copy; 2020 by TimeTREE.
+          br
+          | All Page content is property of TimeTREE.
+    script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
+    script(src='/assets/vanillatoasts/vanillatoasts.js')
+    script(src='/assets/js/common.js')
+    block js

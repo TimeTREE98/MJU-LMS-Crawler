@@ -1,0 +1,19 @@
+#vanillatoasts-container {
+  z-index: 50 !important;
+}
+
+.footer {
+  background-color: white !important;
+}
+
+.modal-card {
+  padding: 10px !important;
+}
+
+.modal-card-foot, .modal-card-head {
+  padding: 8px !important;
+}
+
+.modal-background {
+  background-color: rgba(10, 10, 10, 0.425) !important;
+}
