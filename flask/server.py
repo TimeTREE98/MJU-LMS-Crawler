@@ -3,8 +3,10 @@ import requests as r
 from bs4 import BeautifulSoup as BS4
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r'*': {'origins' : 'https://mju.timetree.me'}})
 api = Api(app)
 
 def all(UserID, UserPW):
@@ -100,6 +102,14 @@ class GetALL(Resource):
     except Exception as e:
       return {'error' : str(e)}
 
+class MainPage(Resource):
+  def get(self):
+    try:
+      return {'status' : 'working...'}
+    except Exception as e:
+      return {'error' : str(e)}
+
+api.add_resource(MainPage, '/')
 api.add_resource(GetALL, '/get/all')
 
 if __name__ == '__main__':

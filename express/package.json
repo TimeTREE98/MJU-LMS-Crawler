@@ -1,6 +1,6 @@
 {
   "name": "mju-server",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "start": "nodemon ./app"
@@ -15,7 +15,6 @@
     "moment": "^2.27.0",
     "morgan": "^1.9.1",
     "pug": "^2.0.4",
-    "request": "^2.88.2",
     "vanillatoasts": "^1.4.0"
   }
 }

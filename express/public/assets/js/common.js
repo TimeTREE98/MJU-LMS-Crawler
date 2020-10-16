@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function login_submit() {
   var loginBtn = document.getElementById("loginBtn");
   loginBtn.classList.add("is-loading");
-  axios.post('/get/all',
+  axios.post('https://mju-api.timetree.me/get/all',
     serialize(document.getElementById('login_form'))
   )
     .then(function (response) {
