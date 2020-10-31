@@ -47,7 +47,7 @@ function login_submit() {
             } else {
               let DOWN_URL = '';
               d['Online'].forEach(function (o, oidx) {
-                let aweek = a.charAt(0);
+                let aweek = a.split('주')[0];
                 if (o['Week'] == parseInt(aweek)) {
                   DOWN_URL += o['Link'] + '^'
                 }

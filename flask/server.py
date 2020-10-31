@@ -63,13 +63,15 @@ def all(UserID, UserPW):
                 OnlineListRes = s.post(OnlineListURL, data = OnlineListData).text
                 OnlineListHTML = BS4(OnlineListRes, 'html.parser')
                 OnlineList = OnlineListHTML.select('li > div > div > div > div > span[onclick]')
-                for OL in OnlineList:
+                for OLidx, OL in enumerate(OnlineList):
                   OLARR = OL['onclick'].split("'")  # ['viewGo(', '1', ', ', '3', ', ', '202009062359', ', ', '202009121417', ',', '118719', ');']
                   OnlineViewFormData = {'lecture_weeks': OLARR[3], 'WEEK_NO': OLARR[1], '_KJKEY': SjCode, 'kj_lect_type': 0}
                   OnlineViewFormRes = s.post(OnlineViewFormURL, data = OnlineViewFormData).text
                   OnlineViewFormHTML = BS4(OnlineViewFormRes, 'html.parser')
                   OnlineViewList = OnlineViewFormHTML.select('.item-title-lesson')
-                  OVLARR = OnlineViewList[0]['val'].split('^')  # ['118717', '4216', '1', '1', 'N']
+                  if len(OnlineViewList) - 1 < OLidx:
+                    continue
+                  OVLARR = OnlineViewList[OLidx]['val'].split('^')  # ['118717', '4216', '1', '1', 'N']
                   OnlineViewNaviData = {'content_id': OVLARR[1], 'organization_id': OVLARR[2], 'lecture_weeks': OVLARR[3], 'navi': 'current', 'item_id': OLARR[9], 'ky': SjCode, 'ud': UserID, 'returnData': 'json', 'encoding': 'utf-8'}
                   OnlineViewNaviRes = json.loads(s.post(OnlineViewNaviURL, data = OnlineViewNaviData).text)  # Navi 영역 POST 요청, Json 형태 변환
                   Online.append({'Week' : ALidx + 1, 'Link' : OnlineViewNaviRes['path']})  # 주차별 동영상 링크 저장
