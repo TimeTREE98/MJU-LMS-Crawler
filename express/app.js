@@ -12,7 +12,7 @@ const mainRouter = require('./routes/main');
 
 app.use('/', mainRouter);
 
-logger.token('date', function () {
+logger.token('date', () => {
   let d = new Date()
     .toString()
     .replace(/[A-Z]{3}\+/, '+')
@@ -30,11 +30,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets/bulma', express.static(path.join(__dirname, './node_modules/bulma/css'))); // npm package mount bulma
 app.use('/assets/vanillatoasts', express.static(path.join(__dirname, './node_modules/vanillatoasts'))); // npm package mount vanillatoasts
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   const notice = { status: err.status, msg: err.message };
   // NodeJS 실행 환경에 따라 에러 메세지 노출 범위 수정 (development 일 경우 err.stack 노출)
   if (req.app.get('env') === 'development') {
