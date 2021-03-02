@@ -68,11 +68,11 @@ function login_submit() {
             rArr = r.split(' | ');
             if (r.indexOf('미제출') == -1 && r.indexOf('없습니다') == -1) {
               listhtml += '<p style="color: green;">';
-              listhtml += rArr[0] + ' | ' + rArr[1] + ' | ' + rArr[2];
+              listhtml += rArr[0] + ' | ' + rArr[2];
               SubmitCnt += 1;
             } else {
               listhtml += '<p style="color: red;">';
-              listhtml += rArr[0] + ' | ' + rArr[1] + ' | ' + rArr[3];
+              listhtml += rArr[0] + ' | ' + rArr[2] + ' | ' + rArr[3];
               UnSubmitCnt += 1;
             }
             listhtml += '</p>';

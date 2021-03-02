@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "/Users/timetree/Desktop/Project/TimeTREE/MJU-LMS-Crawler/env/bin/python3.8"
+  "python.pythonPath": "/Users/timetree/Desktop/Project/TimeTREE/MJU-LMS-Crawler/env/bin/python3.8",
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": ["--line-length", "250"]
 }

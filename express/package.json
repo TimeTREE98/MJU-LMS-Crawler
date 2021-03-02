@@ -3,6 +3,7 @@
   "version": "0.0.3",
   "private": true,
   "scripts": {
+    "start": "nodemon ./app",
     "start:dev": "nodemon ./app",
     "format": "prettier --write \"**/*.{js,json}\""
   },
