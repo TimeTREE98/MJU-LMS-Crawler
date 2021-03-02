@@ -24,19 +24,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function login_submit() {
-  var loginBtn = document.getElementById("loginBtn");
-  loginBtn.classList.add("is-loading");
-  axios.post('https://mju-api.timetree.me/get/all',
-    serialize(document.getElementById('login_form'))
-  )
+  var loginBtn = document.getElementById('loginBtn');
+  loginBtn.classList.add('is-loading');
+  axios
+    .post('https://mju-api.timetree.me/get/all', serialize(document.getElementById('login_form')))
     .then(function (response) {
       let data = response.data;
       if (data.length == 0) {
         alert('로그인 실패 혹은 에러!\n다시 시도해주세요.');
       } else {
-        let SubmitCnt = 0
-        let UnSubmitCnt = 0
-        let listhtml = ''
+        let SubmitCnt = 0;
+        let UnSubmitCnt = 0;
+        let listhtml = '';
         data.forEach(function (d) {
           listhtml += '<div class="column is-6-tablet is-3-widescreen"><div class="card" style="height: 100%"><div class="card-content"><h5 class="title is-6">';
           listhtml += d['Subject'];
@@ -49,9 +48,9 @@ function login_submit() {
               d['Online'].forEach(function (o, oidx) {
                 let aweek = a.split('주')[0];
                 if (o['Week'] == parseInt(aweek)) {
-                  DOWN_URL += o['Link'] + '^'
+                  DOWN_URL += o['Link'] + '^';
                 }
-              })
+              });
               if (DOWN_URL != '') {
                 DOWN_URL = DOWN_URL.substr(0, DOWN_URL.length - 1);
               }
@@ -70,25 +69,31 @@ function login_submit() {
             if (r.indexOf('미제출') == -1 && r.indexOf('없습니다') == -1) {
               listhtml += '<p style="color: green;">';
               listhtml += rArr[0] + ' | ' + rArr[1] + ' | ' + rArr[2];
-              SubmitCnt += 1
+              SubmitCnt += 1;
             } else {
               listhtml += '<p style="color: red;">';
               listhtml += rArr[0] + ' | ' + rArr[1] + ' | ' + rArr[3];
-              UnSubmitCnt += 1
+              UnSubmitCnt += 1;
             }
             listhtml += '</p>';
           });
           listhtml += '</div></div></div>';
         });
         let SubmitSum = SubmitCnt + UnSubmitCnt;
-        let subjecthtml = '<div class="column is-6-tablet is-3-widescreen"><div class="card" style="height: 100%"><div class="card-content"><h5 class="title is-6">전체 과제 제출 현황</h5><div style="display : inline-block;">';
-        subjecthtml += '<p style="color: green; float: left;">👍 : ' + String(SubmitCnt) + '건</p><p style="float: left;">&nbsp;&nbsp;|&nbsp;&nbsp;</p><p style="color: red;">👎 : ' + String(UnSubmitCnt) + '건</p>';
+        let subjecthtml =
+          '<div class="column is-6-tablet is-3-widescreen"><div class="card" style="height: 100%"><div class="card-content"><h5 class="title is-6">전체 과제 제출 현황</h5><div style="display : inline-block;">';
+        subjecthtml +=
+          '<p style="color: green; float: left;">👍 : ' +
+          String(SubmitCnt) +
+          '건</p><p style="float: left;">&nbsp;&nbsp;|&nbsp;&nbsp;</p><p style="color: red;">👎 : ' +
+          String(UnSubmitCnt) +
+          '건</p>';
         subjecthtml += '<p>당신은 지금까지 총 ' + String(SubmitSum) + '개의 과제를 받았으며</p><p>이 중 완료율은 ' + percentage(SubmitCnt, SubmitSum) + ' 입니다!</p></div></div></div></div>';
         hide_modal();
         let VL = document.getElementById('ViewList');
         VL.innerHTML = subjecthtml + listhtml;
       }
-      loginBtn.classList.remove("is-loading");
+      loginBtn.classList.remove('is-loading');
     })
     .catch(function (error) {
       console.log(error);
@@ -102,7 +107,7 @@ function download(URL_ARR) {
     let URL = URL_ARR.split('^');
     let downloadhtml = '';
     URL.forEach(function (UA, UAIDX) {
-      downloadhtml += '<a href="' + UA + '" target="_blank">' + (UAIDX + 1) + '</a><br><br>'
+      downloadhtml += '<a href="' + UA + '" target="_blank">' + (UAIDX + 1) + '</a><br><br>';
     });
     let DU = document.getElementById('download_url');
     DU.innerHTML = downloadhtml;
